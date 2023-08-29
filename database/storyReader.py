@@ -11,21 +11,11 @@ class StoryReader:
         """ Attempts to retrieve all stories from the DB. """
 
         story_items = []
-        try:
-            connection = mysql.connector.connect(host=definitions.MYSQL_HOST, database=definitions.MYSQL_DB,
-                                                 user=definitions.MYSQL_USER,
-                                                 password=definitions.MYSQL_PASSWORD,
-                                                 use_unicode=True, charset='utf8',
-                                                 init_command='SET NAMES UTF8')
+        sql = "SELECT * FROM stories ORDER BY rating DESC"
 
-            sql = "SELECT * FROM stories ORDER BY rating DESC"
-            cursor = connection.cursor()
-            cursor.execute(sql)
-
-            # get all records
-            records = cursor.fetchall()
-            if cursor.rowcount > 0:
-                print("Total number of stories in table: ", cursor.rowcount)
+        records, row_count = StoryReader.__select_data(sql)
+        if row_count > 0:
+            print("Total number of stories in table: ", row_count)
 
             for row in records:
                 story_item = StoryItem()
@@ -37,13 +27,8 @@ class StoryReader:
                 story_item.categories = row[5].strip('["').strip('"]').split('", "')
                 story_item.text = ' '.join(row[6].strip('["').strip('"]').split('", "')).encode("utf-8").decode("unicode-escape")
                 story_items.append(story_item)
-        except mysql.connector.Error as e:
-            print("Error reading stories from MySQL table", e)
-        finally:
-            if connection.is_connected():
-                connection.close()
-                cursor.close()
-                return story_items
+
+        return story_items
 
     @staticmethod
     def get_unprocessed(story_items: list[StoryItem]):
@@ -53,9 +38,9 @@ class StoryReader:
         storage didn't finish).
         """
 
-        token_count = StoryReader.get_token_count()
-        span_count = StoryReader.get_span_count()
-        sentiment_count = StoryReader.get_sentiment_count()
+        token_count = StoryReader.__get_token_count()
+        span_count = StoryReader.__get_span_count()
+        sentiment_count = StoryReader.__get_sentiment_count()
 
         processed = []
         half_processed = []
@@ -103,74 +88,61 @@ class StoryReader:
         return half_processed
 
     @staticmethod
-    def get_token_count():
+    def __get_token_count():
         """ Retrieves the total number of stored tokens per story and source. """
 
         token_count = []
-        try:
-            connection = mysql.connector.connect(host=definitions.MYSQL_HOST, database=definitions.MYSQL_DB,
-                                                 user=definitions.MYSQL_USER,
-                                                 password=definitions.MYSQL_PASSWORD,
-                                                 use_unicode=True, charset='utf8',
-                                                 init_command='SET NAMES UTF8')
+        sql = "SELECT story_id, source, COUNT(token) AS token_count FROM tokens GROUP BY story_id, source;"
 
-            sql = "SELECT story_id, source, COUNT(token) AS token_count FROM tokens GROUP BY story_id, source;"
-            cursor = connection.cursor()
-            cursor.execute(sql)
-
-            # get all records
-            records = cursor.fetchall()
-            if cursor.rowcount > 0:
-                print("Total number of tokens in table: ", cursor.rowcount)
+        records, row_count = StoryReader.__select_data(sql)
+        if row_count > 0:
+            print("Total number of tokens in table: ", row_count)
 
             for row in records:
-                story_item = [row[0], row[1], row[2]]
-                token_count.append(story_item)
-        except mysql.connector.Error as e:
-            print("Error reading tokens from MySQL table", e)
-        finally:
-            if connection.is_connected():
-                connection.close()
-                cursor.close()
-                return token_count
+                result = [row[0], row[1], row[2]]
+                token_count.append(result)
+
+        return token_count
 
     @staticmethod
-    def get_span_count():
+    def __get_span_count():
         """ Retrieves the total number of stored spans per story and source. """
 
         span_count = []
-        try:
-            connection = mysql.connector.connect(host=definitions.MYSQL_HOST, database=definitions.MYSQL_DB,
-                                                 user=definitions.MYSQL_USER,
-                                                 password=definitions.MYSQL_PASSWORD,
-                                                 use_unicode=True, charset='utf8',
-                                                 init_command='SET NAMES UTF8')
+        sql = "SELECT story_id, source, COUNT(span) AS span_count FROM spans GROUP BY story_id, source;"
 
-            sql = "SELECT story_id, source, COUNT(span) AS span_count FROM spans GROUP BY story_id, source;"
-            cursor = connection.cursor()
-            cursor.execute(sql)
-
-            # get all records
-            records = cursor.fetchall()
-            if cursor.rowcount > 0:
-                print("Total number of spans in table: ", cursor.rowcount)
+        records, row_count = StoryReader.__select_data(sql)
+        if row_count > 0:
+            print("Total number of spans in table: ", row_count)
 
             for row in records:
-                story_item = [row[0], row[1], row[2]]
-                span_count.append(story_item)
-        except mysql.connector.Error as e:
-            print("Error reading spans from MySQL table", e)
-        finally:
-            if connection.is_connected():
-                connection.close()
-                cursor.close()
-                return span_count
+                result = [row[0], row[1], row[2]]
+                span_count.append(result)
+
+        return span_count
 
     @staticmethod
-    def get_sentiment_count():
+    def __get_sentiment_count():
         """ Retrieves the total number of stored sentiments per story and source. """
 
         sentiment_count = []
+        sql = "SELECT story_id, source, COUNT(text) AS text_count FROM sentiments GROUP BY story_id, source;"
+
+        records, row_count = StoryReader.__select_data(sql)
+        if row_count > 0:
+            print("Total number of sentiments in table: ", row_count)
+
+            for row in records:
+                result = [row[0], row[1], row[2]]
+                sentiment_count.append(result)
+
+        return sentiment_count
+
+    @staticmethod
+    def __select_data(sql):
+        """ Retrieves data from the database, using the provided query. """
+        row_count = 0
+        records = []
         try:
             connection = mysql.connector.connect(host=definitions.MYSQL_HOST, database=definitions.MYSQL_DB,
                                                  user=definitions.MYSQL_USER,
@@ -178,22 +150,15 @@ class StoryReader:
                                                  use_unicode=True, charset='utf8',
                                                  init_command='SET NAMES UTF8')
 
-            sql = "SELECT story_id, source, COUNT(text) AS text_count FROM sentiments GROUP BY story_id, source;"
             cursor = connection.cursor()
             cursor.execute(sql)
-
-            # get all records
             records = cursor.fetchall()
-            if cursor.rowcount > 0:
-                print("Total number of sentiments in table: ", cursor.rowcount)
-
-            for row in records:
-                story_item = [row[0], row[1], row[2]]
-                sentiment_count.append(story_item)
+            row_count = cursor.rowcount
         except mysql.connector.Error as e:
-            print("Error reading sentiments from MySQL table", e)
+            print("Error reading data from MySQL table", e)
         finally:
             if connection.is_connected():
                 connection.close()
                 cursor.close()
-                return sentiment_count
+
+        return records, row_count
