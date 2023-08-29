@@ -96,7 +96,7 @@ class StoryReader:
 
         records, row_count = StoryReader.__select_data(sql)
         if row_count > 0:
-            print("Total number of tokens in table: ", row_count)
+            print("Total number of story/source combinations in tokens table: ", row_count)
 
             for row in records:
                 result = [row[0], row[1], row[2]]
@@ -113,7 +113,7 @@ class StoryReader:
 
         records, row_count = StoryReader.__select_data(sql)
         if row_count > 0:
-            print("Total number of spans in table: ", row_count)
+            print("Total number of story/source combinations in spans table: ", row_count)
 
             for row in records:
                 result = [row[0], row[1], row[2]]
@@ -130,7 +130,7 @@ class StoryReader:
 
         records, row_count = StoryReader.__select_data(sql)
         if row_count > 0:
-            print("Total number of sentiments in table: ", row_count)
+            print("Total number of story/source combinations in sentiments table: ", row_count)
 
             for row in records:
                 result = [row[0], row[1], row[2]]
