@@ -12,6 +12,8 @@ if __name__ == '__main__':
 
     story_items = TokenReader.get_all()
     if definitions.CATEGORY_COHERENCE:
+        print("[Coherence calculation based on categories starting]")
         CoherenceCalculator.calculate_cat(story_items)
     if definitions.STORY_COHERENCE:
+        print("[Coherence calculation based on stories starting]")
         CoherenceCalculator.calculate_txt(story_items)
