@@ -47,13 +47,13 @@ class CoherenceCalculator:
         topics = []
         score = []
         for i in range(1, 20, 1):
-            print("Attempting to train with num_topics=%s ...", i)
+            print("Attempting to train with num_topics=%s ..." % i)
             start = time.time()
             lda_model = LdaMulticore(corpus=corpus, id2word=dictionary, iterations=10,
                                      num_topics=i, workers=4, passes=50, random_state=100)
             print("--- %s seconds ---" % (time.time() - start))
 
-            print("Calculating coherence for num_topics=%s ...", i)
+            print("Calculating coherence for num_topics=%s ..." % i)
             start = time.time()
             cm = CoherenceModel(model=lda_model, corpus=corpus, dictionary=dictionary, coherence='u_mass')
             print("--- %s seconds ---" % (time.time() - start))
@@ -76,13 +76,13 @@ class CoherenceCalculator:
         topics = []
         score = []
         for i in range(1, 20, 1):
-            print("Attempting to train with num_topics=%s ...", i)
+            print("Attempting to train with num_topics=%s ..." % i)
             start = time.time()
             lda_model = LdaMulticore(corpus=corpus, id2word=dictionary, iterations=10,
                                      num_topics=i, workers=4, passes=50, random_state=100)
             print("--- %s seconds ---" % (time.time() - start))
 
-            print("Calculating coherence for num_topics=%s ...", i)
+            print("Calculating coherence for num_topics=%s ..." % i)
             start = time.time()
             cm = CoherenceModel(model=lda_model, texts=tokens, corpus=corpus, dictionary=dictionary, coherence='c_v')
             print("--- %s seconds ---" % (time.time() - start))
