@@ -19,6 +19,7 @@ class StoryItem:
 
     def print(self):
         """ Print the resulting object, formatted by probability. """
+
         out_txt = "Title: " + str(self.title) \
                   + "\nRating: " + str(self.rating) \
                   + "\nProbability: " + str(self.probability) \
