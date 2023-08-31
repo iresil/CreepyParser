@@ -11,7 +11,7 @@ class CoherenceCalculator:
     def calculate_cat(story_data: list[StoryItem]):
         """
         Sequentially plots coherence scores vs. number of topics (extracted from categories),
-        using either C_umass or C_v.
+        using either C_umass or C_v, to determine what the best configuration for LDAMulticore is.
         """
 
         category_tokens = []
@@ -26,7 +26,7 @@ class CoherenceCalculator:
     def calculate_txt(story_data: list[StoryItem]):
         """
         Sequentially plots coherence scores vs. number of topics (extracted from categories),
-        using either C_umass or C_v.
+        using either C_umass or C_v, to determine what the best configuration for LDAMulticore is.
         """
 
         story_tokens = []
