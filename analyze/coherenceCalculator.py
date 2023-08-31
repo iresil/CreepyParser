@@ -7,11 +7,13 @@ from classify.textProcessor import TextProcessor
 
 
 class CoherenceCalculator:
+    """ Determines the best configuration for LdaMulticore, based on coherence scores. """
+
     @staticmethod
     def calculate_cat(story_data: list[StoryItem]):
         """
         Sequentially plots coherence scores vs. number of topics (extracted from categories),
-        using either C_umass or C_v, to determine what the best configuration for LDAMulticore is.
+        using either C_umass or C_v, to determine what the best configuration for LdaMulticore is.
         """
 
         category_tokens = []
@@ -26,7 +28,7 @@ class CoherenceCalculator:
     def calculate_txt(story_data: list[StoryItem]):
         """
         Sequentially plots coherence scores vs. number of topics (extracted from categories),
-        using either C_umass or C_v, to determine what the best configuration for LDAMulticore is.
+        using either C_umass or C_v, to determine what the best configuration for LdaMulticore is.
         """
 
         story_tokens = []

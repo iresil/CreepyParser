@@ -7,6 +7,8 @@ from classify.tokenizer import Tokenizer
 
 
 class TextProcessor:
+    """ Coordinates text mining actions. """
+
     @staticmethod
     def mine_text(story_data: list[StoryItem]):
         """ Mines stories for tokens, spans and sentiments, found in either the categories or the story text. """

@@ -8,6 +8,8 @@ from text.outputFormatter import OutputFormatter
 
 
 class Tokenizer:
+    """ Extracts various metadata from stories. """
+
     @staticmethod
     def extract_parts_analyze_sentiment(categories, stories):
         """ Extracts tokens, spans and sentiments from categories and story texts. """

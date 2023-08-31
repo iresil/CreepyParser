@@ -2,6 +2,8 @@ import sys
 
 
 class OutputFormatter:
+    """ Helper class that deals with output formatting. """
+
     @staticmethod
     def print_progress(percentage, previous_percentage):
         """ Display a sort of progress bar using the # character. """
