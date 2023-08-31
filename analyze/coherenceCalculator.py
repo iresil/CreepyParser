@@ -1,5 +1,6 @@
 import time
 import matplotlib.pyplot as plt
+import definitions
 from gensim.models import LdaMulticore
 from gensim.models import CoherenceModel
 from database.storyItem import StoryItem
@@ -20,7 +21,8 @@ class CoherenceCalculator:
         for sd in story_data:
             category_tokens.append(sd.category_tokens)
 
-        corpus, dictionary = TextProcessor.retrieve_filtered_dictionary(category_tokens)
+        corpus, dictionary = TextProcessor.retrieve_filtered_dictionary(category_tokens, definitions.CATEGORY_NO_ABOVE,
+                                                                        definitions.CATEGORY_KEEP_N)
         CoherenceCalculator.__c_umass(corpus, dictionary)
         CoherenceCalculator.__c_v(corpus, dictionary, category_tokens)
 
@@ -35,7 +37,8 @@ class CoherenceCalculator:
         for sd in story_data:
             story_tokens.append(sd.story_tokens)
 
-        corpus, dictionary = TextProcessor.retrieve_filtered_dictionary(story_tokens)
+        corpus, dictionary = TextProcessor.retrieve_filtered_dictionary(story_tokens, definitions.STORY_NO_ABOVE,
+                                                                        definitions.STORY_KEEP_N)
         CoherenceCalculator.__c_umass(corpus, dictionary)
         CoherenceCalculator.__c_v(corpus, dictionary, story_tokens)
 

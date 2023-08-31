@@ -3,6 +3,7 @@ from database.storyReader import StoryReader
 from classify.textProcessor import TextProcessor
 from analyze.coherenceCalculator import CoherenceCalculator
 from database.tokenReader import TokenReader
+from classify.classifier import Classifier
 
 
 if __name__ == '__main__':
@@ -17,3 +18,10 @@ if __name__ == '__main__':
     if definitions.STORY_COHERENCE:
         print("[Coherence calculation based on stories starting]")
         CoherenceCalculator.calculate_txt(story_items)
+
+    if definitions.TRAIN_MODELS:
+        classifier = Classifier(story_items)
+        classifier.train_models()
+    if definitions.MAKE_PREDICTIONS:
+        classifier = Classifier(story_items)
+        classifier.make_predictions()
