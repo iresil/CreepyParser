@@ -89,7 +89,7 @@ class TokenReader:
         sentiment_count = []
         sql = """
             SELECT story_id, source,
-                   GROUP_CONCAT(DISTINCT CONCAT(text, ', Polarity: ', polarity, ', Subjectivity: ', subjectivity), ' | ')
+                   GROUP_CONCAT(DISTINCT CONCAT(text, ', Polarity: ', polarity, ', Subjectivity: ', subjectivity)  SEPARATOR' | ')
             FROM sentiments
             GROUP BY story_id, source;
         """
