@@ -1,6 +1,5 @@
 import time
 from gensim.corpora.dictionary import Dictionary
-from gensim.models import LdaMulticore
 from database.storyItem import StoryItem
 from database.storyReader import StoryReader
 from database.storyWriter import StoryWriter
@@ -34,17 +33,17 @@ class TextProcessor:
     def retrieve_filtered_dictionary(tokens):
         """ Returns a corpus and a dictionary after filtering out extremes. """
 
-        print("Creating dictionary ...")
+        print("Creating dictionary")
         start = time.time()
         dictionary = Dictionary(tokens)
         print("--- %s seconds ---" % (time.time() - start))
 
-        print("Filtering extremes ...")
+        print("Filtering extremes")
         start = time.time()
-        dictionary.filter_extremes(no_below=2, no_above=1.00, keep_n=1000)
+        dictionary.filter_extremes(no_below=2, no_above=0.7, keep_n=1000)
         print("--- %s seconds ---" % (time.time() - start))
 
-        print("Creating corpus ...")
+        print("Creating corpus")
         start = time.time()
         corpus = [dictionary.doc2bow(doc) for doc in tokens]
         print("--- %s seconds ---" % (time.time() - start))
