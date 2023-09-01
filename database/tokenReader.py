@@ -114,7 +114,7 @@ class TokenReader:
                                                  user=definitions.MYSQL_USER,
                                                  password=definitions.MYSQL_PASSWORD,
                                                  use_unicode=True, charset='utf8',
-                                                 init_command='SET NAMES UTF8')
+                                                 init_command='SET SESSION group_concat_max_len = 1000000;')
 
             cursor = connection.cursor()
             cursor.execute(sql)
