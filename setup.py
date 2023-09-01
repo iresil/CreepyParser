@@ -14,7 +14,10 @@ setup(
         'spacy~=3.6.1',
         'mysql~=0.0.3',
         'mysql-connector-python~=8.0.32',
-        'gensim~=4.3.1'
+        'gensim~=4.3.1',
+        'spacytextblob~=4.0.0',
+        'pyenchant~=3.2.2',
+        'matplotlib~=3.7.2'
     ],
     package_data={
     },

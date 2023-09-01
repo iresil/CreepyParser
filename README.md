@@ -29,7 +29,10 @@ python -m spacy download en_core_web_md
 ## Text Mining
 The `TextProcessor` class acts as an entry point for this process, but the actual tokenization (together with sentiment extraction, for optimization purposes) is done in `Tokenizer`.
 
-It is called from `main.py`, using `TextProcessor.mine_text(story_data)`.
+It is called from `main.py`, using:
+```
+TextProcessor.mine_text(story_data)
+```
 Before it gets called, `StoryReader.get_stories()` must also be invoked, in order to return base story data to be processed.
 
 You can set `MINE_TEXT = False` in `definitions.py`, if you've already run this and you have its results stored in the database.
@@ -37,14 +40,28 @@ You can set `MINE_TEXT = False` in `definitions.py`, if you've already run this 
 ## Coherence Plotting
 This process is managed by the `CoherenceCalculator` class, and it is performed separately for categories and separately for the actual texts of the stories.
 
-It is called from `main.py`, using either `CoherenceCalculator.calculate_cat(story_items)` or `CoherenceCalculator.calculate_txt(story_items)`.
+It is called from `main.py`, using either the following for categories:
+```
+CoherenceCalculator.calculate_cat(story_items)
+```
+or the following for the actual story texts:
+```
+CoherenceCalculator.calculate_txt(story_items)
+```
 
 You can disable both processes by setting `CATEGORY_COHERENCE = False` and `STORY_COHERENCE = False` in `definitions.py`. 
 
 ## Model training and Predictions
 Both processes are managed by the `Classifier` class.
 
-Both of them are initiated in `main.py`, **training** using `classifier.train_models()` and **predictions** using `classifier.make_predictions()`.
+Both of them are initiated in `main.py`, **training** by calling:
+```
+classifier.train_models()
+```
+and **predictions** by calling:
+```
+classifier.make_predictions()
+```
 After training, models are stored in the `resources` folder and are loaded from there when predictions are requested.
 
 You can disable model training by setting `TRAIN_MODELS = False`, and you can disable predictions by setting `MAKE_PREDICTIONS = False` in `definitions.py`.
