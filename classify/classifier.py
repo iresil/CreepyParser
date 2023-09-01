@@ -30,6 +30,10 @@ class Classifier:
         """ Prepares the classifier for training or predictions. """
 
         self.story_data = story_data
+        self.category_tokens = []
+        self.story_tokens = []
+        self.__category_sentiments = []
+        self.__story_sentiments = []
         for sd in self.story_data:
             self.category_tokens.append(sd.category_tokens)
             self.story_tokens.append(sd.story_tokens)
