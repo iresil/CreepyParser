@@ -1,5 +1,4 @@
 import os
-import json
 import definitions
 from database.storyItem import StoryItem
 from database.storyReader import StoryReader

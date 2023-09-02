@@ -109,10 +109,6 @@ class Classifier:
         lda_model = LdaMulticore.load(model)
 
         for i in range(len(tokens)):
-            # largest_probability = lda_model[corpus][i][0][0][1] * 100
-            # indexes = lda_model[corpus][i][1]
-            # corpus_ref = [item[0] for item in indexes if indexes is not None]
-
             prediction = lda_model[corpus][i]
             most_probable_topic = list(reversed(sorted(prediction[0], key=lambda x: x[1])))[0] if prediction[0] != [] else None
             largest_probability = round(most_probable_topic[1] * 100, 2) if most_probable_topic is not None else 0
