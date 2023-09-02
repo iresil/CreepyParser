@@ -32,7 +32,7 @@ class TextProcessor:
         story_writer.insert_remaining_items(half_processed, story_data)
 
     @staticmethod
-    def retrieve_filtered_dictionary(tokens, no_above, keep_n):
+    def retrieve_filtered_dictionary(tokens, no_above, keep_n, keep_tokens=None):
         """ Returns a corpus and a dictionary after filtering out extremes. """
 
         print("Creating dictionary")
@@ -42,7 +42,7 @@ class TextProcessor:
 
         print("Filtering extremes")
         start = time.time()
-        dictionary.filter_extremes(no_below=2, no_above=no_above, keep_n=keep_n)
+        dictionary.filter_extremes(no_below=50, no_above=no_above, keep_n=keep_n, keep_tokens=keep_tokens)
         print("--- %s seconds ---" % (time.time() - start))
 
         print("Creating corpus")

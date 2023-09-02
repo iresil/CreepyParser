@@ -4,6 +4,7 @@ from gensim.models import LdaMulticore
 from gensim.test.utils import datapath
 from database.storyItem import StoryItem
 from classify.textProcessor import TextProcessor
+from analyze.outlierDetector import OutlierDetector
 
 
 class Classifier:
@@ -24,7 +25,7 @@ class Classifier:
     __category_passes = 1000
     __story_sentiments = []
     __story_num_topics = 3
-    __story_passes = 50
+    __story_passes = 500
 
     def __init__(self, story_data: list[StoryItem]):
         """ Prepares the classifier for training or predictions. """
@@ -44,10 +45,13 @@ class Classifier:
         print("[Filtering category tokens]")
         self.category_corpus, self.category_dictionary = TextProcessor.retrieve_filtered_dictionary(self.category_tokens, definitions.CATEGORY_NO_ABOVE,
                                                                                                     definitions.CATEGORY_KEEP_N)
+
+        tokens_to_keep = OutlierDetector.find_clustered_tokens()
+
         print("")
         print("[Filtering story tokens]")
         self.story_corpus, self.story_dictionary = TextProcessor.retrieve_filtered_dictionary(self.story_tokens, definitions.STORY_NO_ABOVE,
-                                                                                              definitions.STORY_KEEP_N)
+                                                                                              definitions.STORY_KEEP_N, tokens_to_keep)
 
     def train_models(self):
         """ Train two models, one for categories and one for stories, and save them to disk. """
@@ -70,8 +74,9 @@ class Classifier:
 
         print("")
         print("Training " + model_name + " ...")
-        lda_model = LdaMulticore(corpus=corpus, id2word=dictionary, iterations=1000, num_topics=num_topics, workers=4,
-                                 passes=passes)
+        lda_model = LdaMulticore(corpus=corpus, id2word=dictionary, iterations=15000, num_topics=num_topics, workers=4,
+                                 passes=passes, minimum_probability=0.3, decay=1, per_word_topics=True, minimum_phi_value=0.5,
+                                 chunksize=100, eval_every=3)
         topics_seq = lda_model.print_topics(-1)
 
         print("")
@@ -90,17 +95,26 @@ class Classifier:
         lda_model = LdaMulticore.load(model)
 
         for i in range(len(tokens)):
-            probabilities = lda_model[corpus][i]
-            probabilities_sorted = sorted(probabilities, key=lambda x: x[1])
-            largest_probability = round(reversed(probabilities_sorted).__next__()[1] * 100,
-                                        2) if probabilities_sorted != [] else 0
-            largest_probability_index = reversed(probabilities_sorted).__next__()[
-                                            0] - 1 if probabilities_sorted != [] else None
-            corpus_ref = corpus[largest_probability_index] if largest_probability_index is not None else []
+            # largest_probability = lda_model[corpus][i][0][0][1] * 100
+            # indexes = lda_model[corpus][i][1]
+            # corpus_ref = [item[0] for item in indexes if indexes is not None]
+
+            prediction = lda_model[corpus][i]
+            most_probable_topic = reversed(sorted(prediction[0], key=lambda x: x[1])).__next__()
+            largest_probability = round(most_probable_topic[1] * 100, 2) if most_probable_topic is not None else 0
+            topic_index = most_probable_topic[0]
+            corpus_ref = []
+            for j in range(len(prediction[2])):
+                token_index = prediction[2][j][0]
+                per_topic_probabilities = list(reversed(sorted(prediction[2][j][1], key=lambda x: x[1])))
+                largest_topic_probability = per_topic_probabilities[0][1] * 100 if per_topic_probabilities != [] else 0
+                first_probable_topic = per_topic_probabilities[0][0] if per_topic_probabilities != [] else -1
+                if largest_topic_probability > 75 and first_probable_topic == topic_index:
+                    corpus_ref.append(token_index)
 
             topic = ""
             for j in range(len(corpus_ref)):
-                token_index = corpus_ref[j][0]
+                token_index = corpus_ref[j]
                 token_txt = dictionary[token_index]  # dictionary.id2token[] won't work here, because it's populated on request
                 topic += (", " if topic != "" else "") + token_txt
 
