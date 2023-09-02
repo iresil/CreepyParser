@@ -1,21 +1,19 @@
 import numpy
 import matplotlib.pyplot as plt
-from database.tokenReader import TokenReader
 
 
 class OutlierDetector:
     """ Helper class for finding outliers. """
 
     @staticmethod
-    def find_clustered_tokens():
+    def find_clustered_tokens(token_dist):
         """
         Attempts to retrieve all tokens that seem like suitable candidates for selection during training and prediction.
-        The main parameter for outlier detection is how often a token appears in the training documents.
+        The main parameter for outlier detection is how often a token appears in the related documents.
         This mainly means removing outliers using IQR. In this case, the related boxplot's bottom whisker was also removed,
         because if a token is so rare it probably shouldn't be included in the identified categories.
         """
 
-        token_dist = TokenReader.get_token_distribution()
         outliers = OutlierDetector.__iqr_with_top_whisker(token_dist.values())
         result = {k: v for k, v in token_dist.items() if v not in outliers}
         return list(result.keys())

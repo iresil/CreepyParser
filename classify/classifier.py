@@ -3,6 +3,7 @@ import definitions
 from gensim.models import LdaMulticore
 from gensim.test.utils import datapath
 from database.storyItem import StoryItem
+from database.tokenReader import TokenReader
 from classify.textProcessor import TextProcessor
 from analyze.outlierDetector import OutlierDetector
 
@@ -44,16 +45,25 @@ class Classifier:
         print("")
         print("[Filtering category tokens]")
         self.category_corpus, self.category_dictionary = TextProcessor.retrieve_filtered_dictionary(self.category_tokens, definitions.CATEGORY_NO_ABOVE,
-                                                                                                    definitions.CATEGORY_KEEP_N)
+                                                                                                    definitions.CATEGORY_KEEP_N, training_set=training_set)
 
-        tokens_to_keep = None
+        token_dist = {}
         if training_set:
-            tokens_to_keep = OutlierDetector.find_clustered_tokens()
+            token_dist = TokenReader.get_token_distribution()
+        else:
+            for i in range(len(self.story_tokens)):
+                for token in self.story_tokens[i]:
+                    times_found = self.story_data[i].text.count(token)
+                    if token not in token_dist.keys():
+                        token_dist[token] = times_found
+                    else:
+                        token_dist[token] += times_found
+        tokens_to_keep = OutlierDetector.find_clustered_tokens(token_dist)
 
         print("")
         print("[Filtering story tokens]")
         self.story_corpus, self.story_dictionary = TextProcessor.retrieve_filtered_dictionary(self.story_tokens, definitions.STORY_NO_ABOVE,
-                                                                                              definitions.STORY_KEEP_N, tokens_to_keep)
+                                                                                              definitions.STORY_KEEP_N, tokens_to_keep, training_set)
 
     def train_models(self):
         """ Train two models, one for categories and one for stories, and save them to disk. """
@@ -63,12 +73,14 @@ class Classifier:
         Classifier.__train_model(self.story_corpus, self.story_dictionary, self.__story_num_topics,
                                  self.__story_passes, "story_model")
 
-    def make_predictions(self):
+    def make_predictions(self, training_set=False):
         """ Make predictions for the requested stories, based on categories and story content, separately. """
 
-        self.__predict("category_model", self.category_corpus, self.category_dictionary, self.category_tokens, self.__category_sentiments)
+        self.__predict("category_model", self.category_corpus, self.category_dictionary, self.category_tokens,
+                       self.__category_sentiments, training_set)
         print("-------------")
-        self.__predict("story_model", self.story_corpus, self.story_dictionary, self.story_tokens, self.__story_sentiments)
+        self.__predict("story_model", self.story_corpus, self.story_dictionary, self.story_tokens,
+                       self.__story_sentiments, training_set)
 
     @staticmethod
     def __train_model(corpus, dictionary, num_topics, passes, model_name):
@@ -88,7 +100,7 @@ class Classifier:
         model = datapath(os.path.join(definitions.RESOURCE_DIR, model_name))
         lda_model.save(model)
 
-    def __predict(self, model_name, corpus, dictionary, tokens, sentiments):
+    def __predict(self, model_name, corpus, dictionary, tokens, sentiments, training_set):
         """ Make predictions for the requested stories, using the requested (already saved) model. """
 
         print("")
@@ -112,7 +124,8 @@ class Classifier:
                     per_topic_probabilities = list(reversed(sorted(prediction[2][j][1], key=lambda x: x[1])))
                     largest_topic_probability = per_topic_probabilities[0][1] * 100 if per_topic_probabilities != [] else 0
                     first_probable_topic = per_topic_probabilities[0][0] if per_topic_probabilities != [] else -1
-                    if largest_topic_probability > 75 and first_probable_topic == topic_index:
+                    if (training_set and largest_topic_probability > 75 and first_probable_topic == topic_index)\
+                            or (not training_set and largest_topic_probability >= 99.5 and first_probable_topic == topic_index):
                         corpus_ref.append(token_index)
 
             topic = ""
