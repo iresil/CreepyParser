@@ -121,7 +121,8 @@ class Classifier:
                     largest_topic_probability = per_topic_probabilities[0][1] * 100 if per_topic_probabilities != [] else 0
                     first_probable_topic = per_topic_probabilities[0][0] if per_topic_probabilities != [] else -1
                     if (training_set and largest_topic_probability > 75 and first_probable_topic == topic_index)\
-                            or (not training_set and largest_topic_probability >= 99.5 and first_probable_topic == topic_index):
+                            or (not training_set and largest_topic_probability >= definitions.MIN_PROBABILITY_PER_WORD
+                                and first_probable_topic == topic_index):
                         corpus_ref.append(token_index)
 
             topic = ""
