@@ -41,6 +41,27 @@ class TokenReader:
         return story_items
 
     @staticmethod
+    def get_token_distribution():
+        """ Counts how many times each token appears in the stories. """
+
+        token_count = {}
+        sql = """
+            SELECT token, count(*) total_count
+            FROM tokens
+            WHERE source = 'TXT'
+            GROUP BY token;
+        """
+
+        records, row_count = TokenReader.__select_data(sql)
+        if row_count > 0:
+            print("Total counted tokens in table: ", row_count)
+
+            for row in records:
+                token_count[row[0]] = row[1]
+
+        return token_count
+
+    @staticmethod
     def __get_tokens():
         """ Retrieves the total number of stored tokens per story and source. """
 

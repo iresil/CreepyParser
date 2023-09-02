@@ -17,7 +17,8 @@ setup(
         'gensim~=4.3.1',
         'spacytextblob~=4.0.0',
         'pyenchant~=3.2.2',
-        'matplotlib~=3.7.2'
+        'matplotlib~=3.7.2',
+        'numpy~=1.25.2'
     ],
     package_data={
     },
