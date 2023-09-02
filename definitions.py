@@ -3,7 +3,7 @@ import os
 DEBUG = False
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-SAVED_MODEL_DIR = os.path.join(ROOT_DIR, 'resources')
+RESOURCE_DIR = os.path.join(ROOT_DIR, 'resources')
 
 MYSQL_HOST = 'localhost'
 MYSQL_USER = 'python'
@@ -14,7 +14,7 @@ MINE_TEXT = False
 CATEGORY_COHERENCE = False
 STORY_COHERENCE = False
 TRAIN_MODELS = False
-MAKE_PREDICTIONS = True
+TEST_PREDICTIONS = False
 
 CATEGORY_NO_ABOVE = 0.7
 CATEGORY_KEEP_N = 50

@@ -27,7 +27,7 @@ class Classifier:
     __story_num_topics = 3
     __story_passes = 500
 
-    def __init__(self, story_data: list[StoryItem]):
+    def __init__(self, story_data: list[StoryItem], training_set=False):
         """ Prepares the classifier for training or predictions. """
 
         self.story_data = story_data
@@ -46,7 +46,9 @@ class Classifier:
         self.category_corpus, self.category_dictionary = TextProcessor.retrieve_filtered_dictionary(self.category_tokens, definitions.CATEGORY_NO_ABOVE,
                                                                                                     definitions.CATEGORY_KEEP_N)
 
-        tokens_to_keep = OutlierDetector.find_clustered_tokens()
+        tokens_to_keep = None
+        if training_set:
+            tokens_to_keep = OutlierDetector.find_clustered_tokens()
 
         print("")
         print("[Filtering story tokens]")
@@ -83,7 +85,7 @@ class Classifier:
         print(topics_seq)
         print("")
 
-        model = datapath(os.path.join(definitions.SAVED_MODEL_DIR, model_name))
+        model = datapath(os.path.join(definitions.RESOURCE_DIR, model_name))
         lda_model.save(model)
 
     def __predict(self, model_name, corpus, dictionary, tokens, sentiments):
@@ -91,7 +93,7 @@ class Classifier:
 
         print("")
         print("Loading " + model_name + " from disk")
-        model = datapath(os.path.join(definitions.SAVED_MODEL_DIR, model_name))
+        model = datapath(os.path.join(definitions.RESOURCE_DIR, model_name))
         lda_model = LdaMulticore.load(model)
 
         for i in range(len(tokens)):

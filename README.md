@@ -35,7 +35,7 @@ TextProcessor.mine_text(story_data)
 ```
 Before it gets called, `StoryReader.get_stories()` must also be invoked, in order to return base story data to be processed.
 
-You can set `MINE_TEXT = False` in `definitions.py`, if you've already run this and you have its results stored in the database.
+You can keep `MINE_TEXT = False` in `definitions.py`, if you've already run this and you have its results stored in the database.
 
 ## Coherence Plotting
 This process is managed by the `CoherenceCalculator` class, and it is performed separately for categories and separately for the actual texts of the stories.
@@ -49,7 +49,7 @@ or the following for the actual story texts:
 CoherenceCalculator.calculate_txt(story_items)
 ```
 
-You can disable both processes by setting `CATEGORY_COHERENCE = False` and `STORY_COHERENCE = False` in `definitions.py`. 
+You can enable either process by setting `CATEGORY_COHERENCE = True` and `STORY_COHERENCE = True` in `definitions.py`. 
 
 ## Model training and Predictions
 Both processes are managed by the `Classifier` class.
@@ -64,4 +64,4 @@ classifier.make_predictions()
 ```
 After training, models are stored in the `resources` folder and are loaded from there when predictions are requested.
 
-You can disable model training by setting `TRAIN_MODELS = False`, and you can disable predictions by setting `MAKE_PREDICTIONS = False` in `definitions.py`.
+You can enable model training by setting `TRAIN_MODELS = True`, and you can test that the predictions code is working (albeit using the training set) by setting `TEST_PREDICTIONS = True` in `definitions.py`.

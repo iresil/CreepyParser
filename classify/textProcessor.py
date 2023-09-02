@@ -10,7 +10,7 @@ class TextProcessor:
     """ Coordinates text mining actions. """
 
     @staticmethod
-    def mine_text(story_data: list[StoryItem]):
+    def mine_text(story_data: list[StoryItem], training_set=False):
         """ Mines stories for tokens, spans and sentiments, found in either the categories or the story text. """
 
         stories = []
@@ -26,10 +26,11 @@ class TextProcessor:
             story_data[i].add_tokenizer_result(category_tokens[i], category_spans[i], category_sentiments[i],
                                                story_tokens[i], story_spans[i], story_sentiments[i])
 
-        half_processed = StoryReader.get_unprocessed(story_data)
+        if training_set:
+            half_processed = StoryReader.get_unprocessed(story_data)
 
-        story_writer = StoryWriter()
-        story_writer.insert_remaining_items(half_processed, story_data)
+            story_writer = StoryWriter()
+            story_writer.insert_remaining_items(half_processed, story_data)
 
     @staticmethod
     def retrieve_filtered_dictionary(tokens, no_above, keep_n, keep_tokens=None):

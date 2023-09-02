@@ -1,3 +1,7 @@
+import json
+from types import SimpleNamespace
+
+
 class StoryItem:
     """ The set of available information for each story. """
 
@@ -16,6 +20,21 @@ class StoryItem:
     story_spans = None
     story_sentiments = None
     topic = None
+
+    def __init__(self, json_input=None):
+        """ Initialize a StoryItem using the provided JSON string. """
+
+        if json_input is not None:
+            json_input = json_input.replace("\n", "").replace("\r", "")
+            obj = json.loads(json_input, object_hook=lambda d: SimpleNamespace(**d))
+
+            self.id = obj.id
+            self.link = obj.link
+            self.title = obj.title
+            self.rating = obj.rating
+            self.reading_time = obj.reading_time
+            self.categories = obj.categories
+            self.text = obj.text.encode("utf-8").decode("unicode-escape")
 
     def print(self):
         """ Print the resulting object, formatted by probability. """
