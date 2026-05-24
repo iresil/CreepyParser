@@ -45,11 +45,11 @@ class StoryItem:
                   + "\nCategories: " + " | ".join(self.categories) \
                   + "\nTopic: " + self.topic \
                   + "\nCategory Sentiment: " + (" | ".join(self.category_sentiments)
-                                                if self.category_sentiments is not None
-                                                else " | ".join(self.category_sentiments)) \
+                                                if self.category_sentiments
+                                                else "") \
                   + "\nStory Sentiment: " + (" | ".join(self.story_sentiments)
-                                             if self.story_sentiments is not None
-                                             else " | ".join(self.story_sentiments)) + "\n"
+                                             if self.story_sentiments
+                                             else "") + "\n"
         if self.probability > 70:
             print("\033[92m{}\033[00m".format(out_txt))
         elif self.probability >= 50:
