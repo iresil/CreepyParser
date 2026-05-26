@@ -108,6 +108,8 @@ class Classifier:
         model = datapath(os.path.join(definitions.RESOURCE_DIR, model_name))
         lda_model = LdaMulticore.load(model)
 
+        average_probability = -1
+
         for i in range(len(tokens)):
             prediction = lda_model[corpus][i]
             most_probable_topic = list(reversed(sorted(prediction[0], key=lambda x: x[1])))[0] if prediction[0] != [] else None
@@ -131,6 +133,11 @@ class Classifier:
                 token_txt = dictionary[token_index]  # dictionary.id2token[] won't work here, because it's populated on request
                 topic += (", " if topic != "" else "") + token_txt
 
+            if average_probability == -1:
+                average_probability = largest_probability
+            else:
+                average_probability = (i * average_probability + largest_probability) / (i + 1)
+
             self.story_data[i].probability = largest_probability
             self.story_data[i].topic = topic
             if "story" in model_name:
@@ -141,3 +148,6 @@ class Classifier:
                 self.story_data[i].category_sentiments = sentiments[i]
 
             self.story_data[i].print()
+
+        print("Average probability: " + str(average_probability))
+        print("")
