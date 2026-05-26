@@ -114,7 +114,7 @@ class Classifier:
             largest_probability = round(most_probable_topic[1] * 100, 2) if most_probable_topic is not None else 0
             topic_index = most_probable_topic[0] if most_probable_topic is not None else -1
             corpus_ref = []
-            if topic_index > 0:
+            if topic_index >= 0:
                 for j in range(len(prediction[2])):
                     token_index = prediction[2][j][0]
                     per_topic_probabilities = list(reversed(sorted(prediction[2][j][1], key=lambda x: x[1])))
