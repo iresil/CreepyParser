@@ -22,11 +22,9 @@ class Classifier:
     story_dictionary = None
 
     __category_sentiments = []
-    __category_num_topics = 5
-    __category_passes = 1000
+    __category_num_topics = 9
     __story_sentiments = []
-    __story_num_topics = 3
-    __story_passes = 500
+    __story_num_topics = 7
 
     def __init__(self, story_data: list[StoryItem], training_set=False):
         """ Prepares the classifier for training or predictions. """
@@ -69,9 +67,9 @@ class Classifier:
         """ Train two models, one for categories and one for stories, and save them to disk. """
 
         Classifier.__train_model(self.category_corpus, self.category_dictionary, self.__category_num_topics,
-                                 self.__category_passes, "category_model")
+                                 "category_model")
         Classifier.__train_model(self.story_corpus, self.story_dictionary, self.__story_num_topics,
-                                 self.__story_passes, "story_model")
+                                 "story_model")
 
     def make_predictions(self, training_set=False):
         """ Make predictions for the requested stories, based on categories and story content, separately. """
@@ -83,14 +81,13 @@ class Classifier:
                        self.__story_sentiments, training_set)
 
     @staticmethod
-    def __train_model(corpus, dictionary, num_topics, passes, model_name):
+    def __train_model(corpus, dictionary, num_topics, model_name):
         """ Train an LdaMulticore model. """
 
         print("")
         print("Training " + model_name + " ...")
-        lda_model = LdaMulticore(corpus=corpus, id2word=dictionary, iterations=15000, num_topics=num_topics, workers=4,
-                                 passes=passes, minimum_probability=0.3, decay=1, per_word_topics=True, minimum_phi_value=0.5,
-                                 chunksize=100, eval_every=3)
+        lda_model = LdaMulticore(corpus=corpus, id2word=dictionary, num_topics=num_topics, workers=4, iterations=100,
+                                 passes=10, chunksize=300, alpha='asymmetric', eta='auto', per_word_topics=True)
         topics_seq = lda_model.print_topics(-1)
 
         print("")
