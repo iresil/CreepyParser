@@ -13,7 +13,7 @@ if __name__ == '__main__':
         story_data = StoryReader.get_stories()
         TextProcessor.mine_text(story_data, True)
 
-    if definitions.CATEGORY_COHERENCE or definitions.STORY_COHERENCE or definitions.TRAIN_MODELS:
+    if definitions.CATEGORY_COHERENCE or definitions.STORY_COHERENCE or definitions.TRAIN_MODELS or definitions.TEST_PREDICTIONS:
         story_items = TokenReader.get_all()
         if definitions.CATEGORY_COHERENCE:
             print("[Coherence calculation based on categories starting]")
